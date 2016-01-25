@@ -11,13 +11,23 @@ void find_last_blk_in_workload(FILE *input_file, struct last_blk_info *last_blk_
 	unsigned int dump1, dump2;
 	unsigned long long last_blkno = 0;	
 	unsigned int last_blkno_bcnt = 0;
+	char w_r=2;
 
 	while ( fgets(line, 200, input_file ) != NULL) {
 
-		if ( sscanf(line, "%lf %u %llu %u %x\n", &dump0, &dump1, &last_blk_info->blkno, &last_blk_info->bcount, &dump2) != 5 ) {
+		//modified... by bsk
+		//if ( sscanf(line, "%lf %u %llu %u %x\n", &dump0, &dump1, &last_blk_info->blkno, &last_blk_info->bcount, &dump2) != 5 ) {
+		if(sscanf(line, "%u,%llu,%u,%c,%lf\n",&dump1, &last_blk_info->blkno, &last_blk_info->bcount, &w_r, &dump0) != 5){;
 			fprintf(stderr, "Wrong number of arguments for I/O trace event type\n");
 			fprintf(stderr, "line : %s", line);
 		}
+		//modified... by bsk
+		if(w_r == 'w')
+			dump2 = 1;
+		else if(w_r == 'r')
+			dump2 = 0;
+		else
+			fprintf(stderr, "w_r error ...\n");
 		
 		if ( last_blk_info->blkno > last_blkno ) {
 			last_blkno = last_blk_info->blkno;
